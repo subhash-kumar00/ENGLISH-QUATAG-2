@@ -132,7 +132,7 @@
       <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl text-center space-y-5">
         
         <div class="flex justify-end">
-          <button type="button" onclick="returnToHomeWithData()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition shadow flex items-center space-x-1.5">
+          <button type="button" onclick="returnToHomeWithData()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black rounded-xl text-xs transition shadow flex items-center space-x-1.5 cursor-pointer">
             <span>🏠</span>
             <span>ഹോം പേജിലേക്ക് മടങ്ങുക (Save Result)</span>
           </button>
@@ -146,10 +146,8 @@
           </span>
         </div>
 
-        <!-- Dynamic Motivation Badge -->
         <div id="scoreMotivationBadge" class="max-w-xl mx-auto p-4 rounded-2xl border text-sm leading-relaxed transition shadow-inner"></div>
 
-        <!-- Clickable Score Cards -->
         <div id="scoreCardsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
           <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700">
             <span class="text-[11px] text-slate-400 block font-semibold uppercase">നെറ്റ് സ്കോർ</span>
@@ -176,9 +174,8 @@
           </div>
         </div>
 
-        <div id="sheetStatus" class="text-xs text-cyan-400 animate-pulse">സ്കോർ ഫയർബേസിലേക്ക് രേഖപ്പെടുത്തുന്നു...</div>
+        <div id="sheetStatus" class="text-xs text-cyan-400 font-medium">സ്കോർ ഫയർബേസിലേക്ക് രേഖപ്പെടുത്തുന്നു...</div>
 
-        <!-- 8 Mark Cut-off Warning Box -->
         <div id="pdfLockNotice" class="hidden max-w-md mx-auto p-3.5 bg-rose-950/40 border border-rose-800/80 rounded-xl text-xs text-rose-300">
           ⚠️ <strong>ശ്രദ്ധിക്കുക:</strong> ഔദ്യോഗിക നോട്ടുകൾ PDF ഡൗൺലോഡ് ചെയ്യാൻ കുറഞ്ഞത് <strong>8 മാർക്ക്</strong> നേടിയിരിക്കണം. നിങ്ങളുടെ നിലവിലെ സ്കോർ 8-ൽ താഴെയാണ്.
         </div>
@@ -198,14 +195,13 @@
             📊 ലൈവ് റാങ്ക് ലിസ്റ്റ് കാണുക
           </button>
 
-          <button type="button" onclick="returnToHomeWithData()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition flex items-center space-x-1.5">
+          <button type="button" onclick="returnToHomeWithData()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-sm transition flex items-center space-x-1.5 cursor-pointer">
             <span>🏠</span>
             <span>ഹോം പോർട്ടൽ</span>
           </button>
         </div>
       </div>
 
-      <!-- Filtered Question Review Area -->
       <div id="filterReviewArea" class="hidden bg-slate-800 border-2 border-cyan-500/50 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-700 pb-3">
           <h3 id="filterReviewTitle" class="text-lg font-bold text-white"></h3>
@@ -214,7 +210,6 @@
         <div id="filterReviewList" class="space-y-4 max-h-[60vh] overflow-y-auto custom-scroll pr-1"></div>
       </div>
 
-      <!-- Permanent Solutions Area at bottom -->
       <div id="pdfExportWrapper" class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-2xl">
         <div class="border-b border-slate-700 pb-4 mb-6">
           <h3 class="text-xl font-bold text-cyan-400" id="pdfExportExamTitle">CONDITIONALS, QUESTION TAGS & IDIOMS - SET 2 - ഉത്തര സൂചിക</h3>
@@ -224,7 +219,7 @@
       </div>
     </div>
 
-    <!-- Leaderboard Modal (Firebase Native) -->
+    <!-- Leaderboard Modal -->
     <div id="leaderboardModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
       <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-xl w-full p-6 shadow-2xl flex flex-col max-h-[85vh]">
         <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
@@ -277,6 +272,7 @@
     const FIREBASE_DB_URL = "https://sk-psc-portal-default-rtdb.asia-southeast1.firebasedatabase.app";
     let ORIGINAL_PDF_URL = "https://docs.google.com/document/d/YOUR_GOOGLE_DOC_ID/export?format=pdf";
     let examTitle = "CONDITIONALS, QUESTION TAGS & IDIOMS - SET 2";
+    let currentExamKey = "conditionals_set_2";
 
     const questionsData = [
       {
@@ -439,9 +435,9 @@
 
     const fontSizes = [
       { q: "text-sm sm:text-base" },
-      { q: "text-base sm:text-lg" },
-      { q: "text-lg sm:text-xl" },
-      { q: "text-xl sm:text-2xl" }
+      { text: "text-base sm:text-lg" },
+      { text: "text-lg sm:text-xl" },
+      { text: "text-xl sm:text-2xl" }
     ];
 
     let timeLeft = 25 * 60;
@@ -451,9 +447,16 @@
     const quizScreen = document.getElementById('quizScreen');
     const resultScreen = document.getElementById('resultScreen');
 
+    // 🌟 '&' ഉൾപ്പെടെ മായ്ച്ചു കളഞ്ഞ് ഹോം പേജുമായി 100% മാച്ച് ചെയ്യുന്ന ക്ലീൻ കീ നിർമ്മിക്കുന്നു
     function cleanTitleForMatch(str) {
       if (!str) return "";
-      return String(str).replace(/[\s\-_,.:;()\/\\|\[\]]+/g, '').toLowerCase();
+      return String(str).replace(/[\s\-_,.:;()\/\\|\[\]+&]+/g, '').toLowerCase();
+    }
+
+    function sanitizePhone(rawPhone) {
+      if (!rawPhone) return "";
+      let clean = String(rawPhone).replace(/\D/g, '');
+      return clean.length >= 10 ? clean.slice(-10) : clean;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -462,17 +465,43 @@
       const passedPhone = urlParams.get('phone');
       const passedTitle = urlParams.get('title');
       const passedPdf = urlParams.get('pdfUrl');
+      const passedKey = urlParams.get('key');
+
+      if (passedKey && passedKey.trim() !== '') {
+        currentExamKey = passedKey.trim();
+      }
 
       if (passedName && passedName.trim() !== '') {
         currentUser.name = decodeURIComponent(passedName).trim();
       } else {
         try {
-          const storedUser = localStorage.getItem('sk_user_name');
-          if (storedUser && storedUser.trim() !== '') currentUser.name = storedUser.trim();
+          const storedUser = localStorage.getItem('sk_user_name') || localStorage.getItem('sk_candidate_user');
+          if (storedUser) {
+            try {
+              const u = JSON.parse(storedUser);
+              if (u.name) currentUser.name = u.name;
+            } catch(e) {
+              currentUser.name = storedUser.trim();
+            }
+          }
         } catch (e) {}
       }
 
-      if (passedPhone) currentUser.phone = decodeURIComponent(passedPhone);
+      if (passedPhone && passedPhone.trim() !== '') {
+        currentUser.phone = sanitizePhone(decodeURIComponent(passedPhone));
+      } else {
+        try {
+          const stored = localStorage.getItem('sk_candidate_user') || localStorage.getItem('sk_user_phone');
+          if (stored) {
+            try {
+              const u = JSON.parse(stored);
+              if (u.phone) currentUser.phone = sanitizePhone(u.phone);
+            } catch(e) {
+              currentUser.phone = sanitizePhone(stored);
+            }
+          }
+        } catch (e) {}
+      }
       
       if (passedTitle) {
         examTitle = decodeURIComponent(passedTitle).trim();
@@ -485,7 +514,7 @@
 
       const displayElem = document.getElementById('displayUser');
       if (displayElem) {
-        displayElem.innerText = (currentUser.phone && currentUser.phone !== "0000000000")
+        displayElem.innerText = (currentUser.phone && currentUser.phone.length === 10)
           ? `${currentUser.name} (+91 ${currentUser.phone})`
           : currentUser.name;
       }
@@ -512,20 +541,29 @@
       }
     });
 
-    // 🌟 ഫയർബേസിൽ നിന്ന് മുൻപത്തെ അറ്റംപ്റ്റ് എടുത്തു കാണിക്കുന്നു
     async function loadPreviousAttemptFromFirebase() {
       let prevScore = 0, prevCorrect = 0, prevWrong = 0, prevSkipped = 0;
+      let studentPhone = sanitizePhone(currentUser.phone);
 
-      if (currentUser.phone && currentUser.phone !== "0000000000") {
+      if (studentPhone && studentPhone.length === 10) {
         try {
-          const res = await fetch(`${FIREBASE_DB_URL}/users_history/${currentUser.phone}.json`);
+          const res = await fetch(`${FIREBASE_DB_URL}/users_history/${studentPhone}.json?_t=${Date.now()}`);
           const data = await res.json();
           if (data) {
-            const hList = Object.values(data);
+            let matched = null;
             const cleanT = cleanTitleForMatch(examTitle);
-            const matched = hList.slice().reverse().find(h => cleanTitleForMatch(h.title) === cleanT);
+
+            if (data[cleanT]) {
+              matched = data[cleanT];
+            } else if (data[currentExamKey]) {
+              matched = data[currentExamKey];
+            } else {
+              const hList = Object.values(data);
+              matched = hList.slice().reverse().find(h => cleanTitleForMatch(h.title) === cleanT || cleanT.includes(cleanTitleForMatch(h.title)));
+            }
+
             if (matched) {
-              prevScore = Number(matched.score || 0);
+              prevScore = Number(matched.score !== undefined ? matched.score : (matched.MARK || 0));
               prevCorrect = matched.correct || 0;
               prevWrong = matched.wrong || 0;
               prevSkipped = matched.skipped || 0;
@@ -653,7 +691,6 @@
       handleReportQuestion(currentIndex + 1);
     });
 
-    // 🌟 ചോദ്യത്തിലെ സംശയം നേരിട്ട് ഫയർബേസിലേക്ക് റിപ്പോർട്ട് ചെയ്യുന്നു
     async function handleReportQuestion(qNum) {
       const reason = prompt(`ചോദ്യം ${qNum} ൽ എന്തെങ്കിലും തെറ്റുകൾ ഉണ്ടെങ്കിൽ ദയവായി താഴെ രേഖപ്പെടുത്തുക:`);
       if (reason && reason.trim()) {
@@ -804,49 +841,110 @@
       });
     }
 
-    // 🌟 ഫയർബേസിലേക്ക് മാർക്കുകൾ തത്സമയം സേവ് ചെയ്യുന്നു
+    // 🌟 live_ranks ലേക്കും users_history ലേക്കും കൃത്യമായ കീയോടെ സേവ് ചെയ്യുന്ന ഫംഗ്ഷൻ (100% Fixed)
     async function sendResultToFirebase(payload) {
       const statusDiv = document.getElementById('sheetStatus');
-      if (!payload.phone || payload.phone === "0000000000") {
-        statusDiv.innerText = "✓ മാർക്ക് സ്ക്രീനിൽ ലഭ്യമാണ് (ലോഗിൻ ചെയ്തിട്ടില്ല).";
-        statusDiv.classList.remove('animate-pulse');
-        return;
+      
+      let studentPhone = sanitizePhone(payload.phone || currentUser.phone);
+      let studentName = payload.name || currentUser.name || 'വിദ്യാർത്ഥി';
+
+      if (!studentPhone || studentPhone.length < 10) {
+        try {
+          const stored = localStorage.getItem('sk_candidate_user');
+          if (stored) {
+            const u = JSON.parse(stored);
+            if (u.phone) studentPhone = sanitizePhone(u.phone);
+          }
+        } catch(e) {}
       }
 
-      const cleanExamKey = cleanTitleForMatch(examTitle);
+      if (!studentPhone || studentPhone.length < 10) {
+        studentPhone = "9999999999"; 
+      }
+
       const todayDate = new Date().toISOString().split('T')[0];
+      
+      // 🌟 '&' ഉൾപ്പെടെ മാറ്റിയ ഒരൊറ്റ മാച്ചിംഗ് കീ (ഹോം പേജിലെ റാങ്ക് ലിസ്റ്റ് ഉടൻ ലഭ്യമാക്കാൻ)
+      const cleanKey = cleanTitleForMatch(examTitle) || currentExamKey;
+
+      const saveRecord = {
+        title: String(examTitle),
+        name: String(studentName),
+        phone: String(studentPhone),
+        Official_Name: String(studentName),
+        Phone: String(studentPhone),
+        score: parseFloat(payload.score),
+        MARK: parseFloat(payload.score),
+        correct: parseInt(payload.correct),
+        wrong: parseInt(payload.wrong),
+        skipped: parseInt(payload.skipped),
+        date: todayDate,
+        timestamp: Date.now()
+      };
+
+      const jsonBody = JSON.stringify(saveRecord);
 
       try {
-        await fetch(`${FIREBASE_DB_URL}/ranks/${cleanExamKey}/${payload.phone}.json`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: payload.name,
-            phone: payload.phone,
-            score: payload.score,
-            date: todayDate
-          })
-        });
+        if (statusDiv) {
+          statusDiv.innerText = "സ്കോർ ഫയർബേസിലേക്ക് രേഖപ്പെടുത്തുന്നു...";
+          statusDiv.className = "text-xs text-cyan-400 animate-pulse font-medium";
+        }
 
-        await fetch(`${FIREBASE_DB_URL}/users_history/${payload.phone}.json`, {
-          method: 'POST',
+        const fetchOptions = {
+          method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            title: examTitle,
-            score: payload.score,
-            correct: payload.correct,
-            wrong: payload.wrong,
-            skipped: payload.skipped,
-            date: todayDate,
-            timestamp: Date.now()
-          })
-        });
+          body: jsonBody,
+          keepalive: true
+        };
 
-        statusDiv.innerText = "✓ മാർക്ക് ഫയർബേസിൽ വിജയകരമായി രേഖപ്പെടുത്തി!";
-        statusDiv.className = "text-xs text-emerald-400 mb-4";
+        // 🌟 1. ആദ്യ ശ്രമമാണോ എന്ന് live_ranks-ൽ നോക്കുന്നു
+        const checkLiveRes = await fetch(`${FIREBASE_DB_URL}/live_ranks/${cleanKey}/${studentPhone}.json`).catch(() => null);
+        const liveData = checkLiveRes ? await checkLiveRes.json() : null;
+
+        const isFirstAttempt = (!liveData || liveData.score === undefined);
+
+        let saveTasks = [];
+
+        // ആദ്യ ശ്രമമാണെങ്കിൽ മാത്രം live_ranks ലേക്കും ranks ലേക്കും PATCH ചെയ്യുന്നു
+        if (isFirstAttempt) {
+          saveTasks.push(
+            fetch(`${FIREBASE_DB_URL}/live_ranks/${cleanKey}/${studentPhone}.json`, fetchOptions),
+            fetch(`${FIREBASE_DB_URL}/ranks/${cleanKey}/${studentPhone}.json`, fetchOptions)
+          );
+        }
+
+        // 🌟 2. users_history-ലേക്ക് ഒരൊറ്റ പ്രാവശ്യം മാത്രം PATCH ചെയ്യുന്നു (ഡ്യൂപ്ലിക്കേഷനും ഡാറ്റ നഷ്ടപ്പെടലും ഒഴിവാക്കി)
+        saveTasks.push(
+          fetch(`${FIREBASE_DB_URL}/users_history/${studentPhone}/${cleanKey}.json`, fetchOptions)
+        );
+
+        // 🌟 3. പ്രൊഫൈൽ സിങ്ക്
+        saveTasks.push(
+          fetch(`${FIREBASE_DB_URL}/users/${studentPhone}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              Official_Name: studentName,
+              Phone: studentPhone
+            }),
+            keepalive: true
+          })
+        );
+
+        await Promise.all(saveTasks);
+
+        if (statusDiv) {
+          statusDiv.innerText = isFirstAttempt
+            ? "✓ ആദ്യ ശ്രമത്തിലെ മാർക്ക് റാങ്ക് ലിസ്റ്റിലും പ്രൊഫൈലിലും രേഖപ്പെടുത്തി!"
+            : "✓ Reattempt പൂർത്തിയായി (പ്രൊഫൈലിൽ അപ്ഡേറ്റ് ആയി, റാങ്ക് ലിസ്റ്റിൽ ആദ്യ ശ്രമം നിലനിർത്തി).";
+          statusDiv.className = "text-xs text-emerald-400 font-semibold mb-4";
+        }
       } catch (err) {
-        statusDiv.innerText = "ഡാറ്റ സേവ് ചെയ്യുന്നതിൽ ചെറിയ തടസ്സം നേരിട്ടു.";
-        statusDiv.className = "text-xs text-rose-400 mb-4";
+        console.error("Firebase sync error:", err);
+        if (statusDiv) {
+          statusDiv.innerText = "സ്കോർ രേഖപ്പെടുത്തുന്നതിൽ ചെറിയ തടസ്സം നേരിട്ടു.";
+          statusDiv.className = "text-xs text-rose-400 mb-4";
+        }
       }
     }
 
@@ -940,10 +1038,9 @@
 
     function openFeedbackModal() { document.getElementById('feedbackModal').classList.remove('hidden'); }
 
-    // 🌟 ഫീഡ്ബാക്ക് ഫയർബേസിലേക്ക് അയക്കുന്നു
     async function recordFeedbackAndOpenDownload(feedbackVal) {
       document.getElementById('feedbackModal').classList.add('hidden');
-      if (currentUser.phone && currentUser.phone !== "0000000000") {
+      if (currentUser.phone && currentUser.phone.length === 10) {
         try {
           await fetch(`${FIREBASE_DB_URL}/feedbacks.json`, {
             method: 'POST',
@@ -1089,7 +1186,6 @@
       });
     });
 
-    // 🌟 ഫയർബേസിൽ നിന്ന് ലൈവ് റാങ്ക് ലിസ്റ്റ് എടുത്തു കാണിക്കുന്നു
     async function fetchLiveLeaderboard() {
       const modal = document.getElementById('leaderboardModal');
       const loader = document.getElementById('leaderboardLoading');
@@ -1101,11 +1197,17 @@
       wrapper.classList.add('hidden');
       tbody.innerHTML = '';
 
-      const cleanKey = cleanTitleForMatch(examTitle);
+      const cleanKey = cleanTitleForMatch(examTitle) || currentExamKey;
 
       try {
-        const res = await fetch(`${FIREBASE_DB_URL}/ranks/${cleanKey}.json`);
-        const data = await res.json();
+        let res = await fetch(`${FIREBASE_DB_URL}/live_ranks/${cleanKey}.json?_t=${Date.now()}`);
+        let data = await res.json();
+
+        if (!data) {
+          res = await fetch(`${FIREBASE_DB_URL}/ranks/${cleanKey}.json?_t=${Date.now()}`);
+          data = await res.json();
+        }
+
         loader.classList.add('hidden');
         wrapper.classList.remove('hidden');
 
@@ -1115,20 +1217,20 @@
         }
 
         let ranks = Object.values(data);
-        ranks.sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+        ranks.sort((a, b) => Number(b.score !== undefined ? b.score : (b.MARK || 0)) - Number(a.score !== undefined ? a.score : (a.MARK || 0)));
 
         ranks.forEach((entry, idx) => {
-          let phoneStr = String(entry.phone || '').replace(/[^0-9]/g, '');
-          if (phoneStr.length >= 10) phoneStr = phoneStr.slice(-10);
-          const masked = (phoneStr && phoneStr.length >= 5) ? phoneStr.substring(0, 5) + '*****' : '---';
+          let phoneStr = sanitizePhone(entry.phone || entry.Phone);
+          const masked = (phoneStr && phoneStr.length >= 10) ? phoneStr.substring(0, 3) + '••••' + phoneStr.substring(7) : '---';
+          let markVal = Number(entry.score !== undefined ? entry.score : (entry.MARK || 0));
 
           const row = document.createElement('tr');
           row.className = 'hover:bg-slate-700/30 text-slate-300';
           row.innerHTML = `
             <td class="py-2.5 px-3 font-mono font-bold">${idx + 1}</td>
-            <td class="py-2.5 px-3 font-medium">${entry.name || 'വിദ്യാർത്ഥി'}</td>
+            <td class="py-2.5 px-3 font-medium">${entry.name || entry.Official_Name || 'വിദ്യാർത്ഥി'}</td>
             <td class="py-2.5 px-3 font-mono text-xs text-slate-400">${masked}</td>
-            <td class="py-2.5 px-3 text-right font-mono font-bold text-cyan-400">${Number(entry.score || 0).toFixed(2)}</td>
+            <td class="py-2.5 px-3 text-right font-mono font-bold text-cyan-400">${markVal.toFixed(2)}</td>
           `;
           tbody.appendChild(row);
         });
@@ -1148,7 +1250,7 @@
       const wrong = document.getElementById('wrongCount').innerText;
       const skipped = document.getElementById('skipCount').innerText;
 
-      window.location.href = `${homePortalUrl}?completed=true&title=${encodeURIComponent(examTitle)}&score=${score}&correct=${correct}&wrong=${wrong}&skipped=${skipped}`;
+      window.location.href = `${homePortalUrl}?completed=true&key=${encodeURIComponent(currentExamKey)}&title=${encodeURIComponent(examTitle)}&score=${score}&correct=${correct}&wrong=${wrong}&skipped=${skipped}`;
     }
   </script>
 </body>
